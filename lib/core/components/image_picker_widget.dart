@@ -88,7 +88,7 @@ class _ImagePickerWidgetState extends State<ImagePickerWidget> {
                 padding: const EdgeInsets.only(right: 10.0),
                 child: Button.filled(
                   height: 30.0,
-                  width: 127.0,
+                  width: 150.0,
                   onPressed: _pickImage,
                   label: 'Choose Photo',
                   fontSize: 12.0,

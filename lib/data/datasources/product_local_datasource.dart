@@ -47,6 +47,12 @@ CREATE TABLE $tableProducts(
     }
   }
 
+  Future<Product> insertProduct(Product product) async {
+    final db = await instance.database;
+    int id = await db.insert(tableProducts, product.toMap());
+    return product.copyWith(id: id);
+  }
+
   Future<List<Product>> getAllProduct() async {
     final db = await instance.database;
     final result = await db.query(tableProducts);

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:flutter_pos_dhani/core/extensions/build_context_ext.dart';
 import 'package:flutter_pos_dhani/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
 import 'package:flutter_pos_dhani/presentation/auth/pages/login_page.dart';
@@ -10,6 +11,7 @@ import '../../../core/components/spaces.dart';
 import '../../../core/constants/colors.dart';
 import '../../home/bloc/product/product_bloc.dart';
 import '../bloc/logout/logout_bloc.dart';
+import 'manage_product_page.dart';
 
 class ManageMenuPage extends StatelessWidget {
   const ManageMenuPage({super.key});
@@ -80,7 +82,7 @@ class ManageMenuPage extends StatelessWidget {
                 MenuButton(
                   iconPath: Assets.images.manageProduct.path,
                   label: 'Kelola Produk',
-                  onPressed: () {},
+                  onPressed: () => context.push(const ManageProductPage()),
                   isImage: true,
                 ),
                 const SpaceWidth(15.0),
