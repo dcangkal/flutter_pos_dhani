@@ -4,7 +4,9 @@ import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart
 import 'package:freezed_annotation/freezed_annotation.dart';
 
 import 'package:flutter_pos_dhani/data/datasources/product_remote_datasource.dart';
+import 'package:image_picker/image_picker.dart';
 
+import '../../../../data/models/request/product_request_model.dart';
 import '../../../../data/models/response/product_response_model.dart';
 
 part 'product_bloc.freezed.dart';
@@ -49,10 +51,22 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
 
     on<_AddProduct>((event, emit) async {
       emit(const ProductState.loading());
-      final newProduct =
-          await ProductLocalDatasource.instance.insertProduct(event.product);
-      products.add(newProduct);
-
+      final requestData = ProductRequestModel(
+        name: event.product.name,
+        price: event.product.price,
+        stock: event.product.stock,
+        category: event.product.category,
+        isBestSeller: event.product.isBestSeller ? 1 : 0,
+        image: event.image,
+      );
+      final response = await productRemoteDatasource.addProduct(requestData);
+      response.fold(
+        (l) => emit(ProductState.error(l)),
+        (r) {
+          products.add(r.data);
+          // emit(ProductState.success(products));
+        },
+      );
       emit(ProductState.success(products));
     });
   }
