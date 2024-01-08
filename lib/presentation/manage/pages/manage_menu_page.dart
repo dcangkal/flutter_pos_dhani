@@ -2,14 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pos_dhani/core/extensions/build_context_ext.dart';
 import 'package:flutter_pos_dhani/data/datasources/auth_local_datasource.dart';
-import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
 import 'package:flutter_pos_dhani/presentation/auth/pages/login_page.dart';
+import 'package:flutter_pos_dhani/presentation/manage/pages/sync_data_page.dart';
 
 import '../../../core/assets/assets.gen.dart';
 import '../../../core/components/menu_button.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/constants/colors.dart';
-import '../../home/bloc/product/product_bloc.dart';
 import '../bloc/logout/logout_bloc.dart';
 import 'manage_product_page.dart';
 
@@ -99,41 +98,12 @@ class ManageMenuPage extends StatelessWidget {
             ),
             Row(
               children: [
-                BlocConsumer<ProductBloc, ProductState>(
-                  listener: (context, state) {
-                    state.maybeWhen(
-                      orElse: () {},
-                      success: (data) async {
-                        await ProductLocalDatasource.instance
-                            .removeAllProduct();
-                        await ProductLocalDatasource.instance
-                            .insertAllProduct(data);
-                        ScaffoldMessenger.of(context)
-                            .showSnackBar(const SnackBar(
-                          backgroundColor: AppColors.primary,
-                          content: Text("sync data success"),
-                        ));
-                      },
-                    );
-                  },
-                  builder: (context, state) {
-                    return state.maybeWhen(orElse: () {
-                      return ElevatedButton(
-                        onPressed: () {
-                          context
-                              .read<ProductBloc>()
-                              .add(const ProductEvent.fetch());
-                        },
-                        child: const Text("Sync Data"),
-                      );
-                    }, loading: () {
-                      return const Center(
-                        child: CircularProgressIndicator(),
-                      );
-                    });
-                  },
+                MenuButton(
+                  iconPath: Assets.images.manageProduct.path,
+                  label: 'Sync Data',
+                  onPressed: () => context.push(SyncDataPage()),
+                  isImage: true,
                 ),
-
                 // const SpaceWidth(15.0),
                 // MenuButton(
                 //   iconPath: Assets.images.managePrinter.path,

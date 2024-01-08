@@ -12,36 +12,21 @@ import '../widgets/payment_cash_dialog.dart';
 import '../widgets/payment_qris_dialog.dart';
 import '../widgets/process_button.dart';
 
-class OrdersPage extends StatelessWidget {
+class OrdersPage extends StatefulWidget {
   const OrdersPage({super.key});
 
+  @override
+  State<OrdersPage> createState() => _OrdersPageState();
+}
+
+class _OrdersPageState extends State<OrdersPage> {
   @override
   Widget build(BuildContext context) {
     final indexValue = ValueNotifier(0);
     const paddingHorizontal = EdgeInsets.symmetric(horizontal: 16.0);
-    // final List<OrderModel> orders = [
-    //   OrderModel(
-    //     image: Assets.images.f1.path,
-    //     name: 'Nutty Oat Latte',
-    //     price: 39000,
-    //   ),
-    //   OrderModel(
-    //     image: Assets.images.f2.path,
-    //     name: 'Iced Latte',
-    //     price: 24000,
-    //   ),
-    // ];
 
     List<OrderItem> orders = [];
     int totalPrice = 0;
-
-    // int calculateTotalPrice(List<OrderModel> orders) {
-    //   int totalPrice = 0;
-    //   for (final order in orders) {
-    //     totalPrice += order.price;
-    //   }
-    //   return totalPrice;
-    // }
 
     return Scaffold(
       appBar: AppBar(
@@ -89,32 +74,39 @@ class OrdersPage extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            ValueListenableBuilder(
-              valueListenable: indexValue,
-              builder: (context, value, _) => Row(
-                children: [
-                  const SpaceWidth(10.0),
-                  MenuButton(
-                    iconPath: Assets.icons.cash.path,
-                    label: 'Tunai',
-                    isActive: value == 1,
-                    onPressed: () {
-                      indexValue.value = 1;
-                      context
-                          .read<OrderBloc>()
-                          .add(OrderEvent.addPaymentMethod('tunai', orders));
-                    },
-                  ),
-                  const SpaceWidth(10.0),
-                  MenuButton(
-                    iconPath: Assets.icons.qrCode.path,
-                    label: 'QRIS',
-                    isActive: value == 2,
-                    onPressed: () => indexValue.value = 2,
-                  ),
-                  const SpaceWidth(10.0),
-                ],
-              ),
+            BlocBuilder<CheckoutBloc, CheckoutState>(
+              builder: (context, state) {
+                return state.maybeWhen(orElse: () {
+                  return const SizedBox();
+                }, success: (data, qty, total) {
+                  return ValueListenableBuilder(
+                    valueListenable: indexValue,
+                    builder: (context, value, _) => Row(
+                      children: [
+                        const SpaceWidth(10.0),
+                        MenuButton(
+                          iconPath: Assets.icons.cash.path,
+                          label: 'Tunai',
+                          isActive: value == 1,
+                          onPressed: () {
+                            indexValue.value = 1;
+                            context.read<OrderBloc>().add(
+                                OrderEvent.addPaymentMethod('Tunai', data));
+                          },
+                        ),
+                        const SpaceWidth(10.0),
+                        MenuButton(
+                          iconPath: Assets.icons.qrCode.path,
+                          label: 'QRIS',
+                          isActive: value == 2,
+                          onPressed: () => indexValue.value = 2,
+                        ),
+                        const SpaceWidth(10.0),
+                      ],
+                    ),
+                  );
+                });
+              },
             ),
             const SpaceHeight(20.0),
             ProcessButton(

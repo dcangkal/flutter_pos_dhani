@@ -32,7 +32,7 @@ class ProcessButton extends StatelessWidget {
               builder: (context, state) {
                 return state.maybeWhen(orElse: () {
                   return const Text(
-                    'Rp. 0',
+                    '0',
                     style: TextStyle(
                       color: Colors.white,
                       fontSize: 16,

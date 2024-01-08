@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:bloc/bloc.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
 import 'package:freezed_annotation/freezed_annotation.dart';
 
@@ -68,6 +69,20 @@ class ProductBloc extends Bloc<ProductEvent, ProductState> {
         },
       );
       emit(ProductState.success(products));
+    });
+
+    on<_SearchProduct>((event, emit) async {
+      emit(const _Loading());
+      final searchProduct = products
+          .where((element) =>
+              element.name.toLowerCase().contains(event.query.toLowerCase()))
+          .toList();
+      emit(_Success(searchProduct));
+    });
+
+    on<_FetchAllFromState>((event, emit) async {
+      emit(const _Loading());
+      emit(_Success(products));
     });
   }
 }

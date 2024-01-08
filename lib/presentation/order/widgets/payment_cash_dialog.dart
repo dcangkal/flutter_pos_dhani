@@ -3,14 +3,15 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pos_dhani/core/extensions/build_context_ext.dart';
 import 'package:flutter_pos_dhani/core/extensions/int_ext.dart';
 import 'package:flutter_pos_dhani/core/extensions/string_ext.dart';
-import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
-import 'package:flutter_pos_dhani/presentation/order/models/order_model.dart';
+import 'package:intl/intl.dart';
 
 import '../../../core/components/buttons.dart';
 import '../../../core/components/custom_text_field.dart';
 import '../../../core/components/spaces.dart';
 import '../../../core/constants/colors.dart';
+import '../../../data/datasources/product_local_datasource.dart';
 import '../bloc/order/order_bloc.dart';
+import '../models/order_model.dart';
 import 'payment_success_dialog.dart';
 
 class PaymentCashDialog extends StatefulWidget {
@@ -22,7 +23,8 @@ class PaymentCashDialog extends StatefulWidget {
 }
 
 class _PaymentCashDialogState extends State<PaymentCashDialog> {
-  TextEditingController? priceController;
+  TextEditingController?
+      priceController; // = TextEditingController(text: widget.price.currencyFormatRp);
 
   @override
   void initState() {
@@ -33,8 +35,6 @@ class _PaymentCashDialogState extends State<PaymentCashDialog> {
 
   @override
   Widget build(BuildContext context) {
-    final priceController =
-        TextEditingController(text: widget.price.currencyFormatRp);
     return AlertDialog(
       scrollable: true,
       title: Stack(
@@ -65,15 +65,15 @@ class _PaymentCashDialogState extends State<PaymentCashDialog> {
         children: [
           const SpaceHeight(16.0),
           CustomTextField(
-            controller: priceController,
+            controller: priceController!,
             label: '',
             showLabel: false,
             keyboardType: TextInputType.number,
             onChanged: (value) {
               final int priceValue = value.toIntegerFromText;
-              priceController.text = priceValue.currencyFormatRp;
-              priceController.selection = TextSelection.fromPosition(
-                  TextPosition(offset: priceController.text.length));
+              priceController!.text = priceValue.currencyFormatRp;
+              priceController!.selection = TextSelection.fromPosition(
+                  TextPosition(offset: priceController!.text.length));
             },
           ),
           const SpaceHeight(16.0),
@@ -106,57 +106,49 @@ class _PaymentCashDialogState extends State<PaymentCashDialog> {
           BlocConsumer<OrderBloc, OrderState>(
             listener: (context, state) {
               state.maybeWhen(
-                  orElse: () {},
-                  success: (
-                    orders,
-                    totalQuantity,
-                    totalPrice,
-                    paymentMethod,
-                    nominalBayar,
-                    idKasir,
-                    namaKasir,
-                  ) {
-                    final orderModel = OrderModel(
-                      paymentMethod: paymentMethod,
-                      nominalBayar: nominalBayar,
-                      orders: orders,
-                      totalQuantity: totalQuantity,
-                      totalPrice: totalPrice,
+                orElse: () {},
+                success:
+                    (data, qty, total, payment, nominal, idKasir, namaKasir) {
+                  final orderModel = OrderModel(
+                      paymentMethod: payment,
+                      nominalBayar: nominal,
+                      orders: data,
+                      totalQuantity: qty,
+                      totalPrice: total,
                       idKasir: idKasir,
                       namaKasir: namaKasir,
-                      isSync: false,
-                    );
-                    ProductLocalDatasource.instance.saveOrder(orderModel);
-                    context.pop();
-                    showDialog(
-                      context: context,
-                      builder: (context) => const PaymentSuccessDialog(),
-                    );
-                  });
+                      //tranction time format 2024-01-03T22:12:22
+                      transactionTime: DateFormat('yyyy-MM-ddTHH:mm:ss')
+                          .format(DateTime.now()),
+                      isSync: false);
+                  ProductLocalDatasource.instance.saveOrder(orderModel);
+                  context.pop();
+                  showDialog(
+                    context: context,
+                    builder: (context) => const PaymentSuccessDialog(),
+                  );
+                },
+              );
             },
             builder: (context, state) {
               return state.maybeWhen(orElse: () {
                 return const SizedBox();
-              }, success: (
-                data,
-                totalQuantity,
-                totalPrice,
-                paymentMethod,
-                nominalBayar,
-                idKasir,
-                namaKasir,
-              ) {
+              }, success: (data, qty, total, payment, _, idKasir, mameKasir) {
                 return Button.filled(
                   onPressed: () {
                     context.read<OrderBloc>().add(OrderEvent.addNominalBayar(
-                        priceController.text.toIntegerFromText));
+                          priceController!.text.toIntegerFromText,
+                        ));
+                    // context.pop();
+                    // showDialog(
+                    //   context: context,
+                    //   builder: (context) => const PaymentSuccessDialog(),
+                    // );
                   },
                   label: 'Proses',
                 );
               }, error: (message) {
-                return Center(
-                  child: Text(message),
-                );
+                return const SizedBox();
               });
             },
           ),
