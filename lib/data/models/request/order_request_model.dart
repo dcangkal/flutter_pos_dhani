@@ -15,7 +15,7 @@ class OrderRequestModel {
     required this.totalPrice,
     required this.totalItem,
     required this.orderItems,
-    this.paymentMethod = 'cash',
+    required this.paymentMethod,
   });
 
   factory OrderRequestModel.fromJson(String str) =>

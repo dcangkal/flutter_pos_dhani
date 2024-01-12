@@ -7,9 +7,14 @@ import '../../../core/constants/colors.dart';
 import '../../../data/datasources/product_local_datasource.dart';
 import '../../home/bloc/product/product_bloc.dart';
 
-class SyncDataPage extends StatelessWidget {
-  SyncDataPage({super.key});
+class SyncDataPage extends StatefulWidget {
+  const SyncDataPage({super.key});
 
+  @override
+  State<SyncDataPage> createState() => _SyncDataPageState();
+}
+
+class _SyncDataPageState extends State<SyncDataPage> {
   final List<SyncItemModel> syncList = [
     SyncItemModel(
       name: 'sync products',
@@ -70,7 +75,7 @@ class SyncDataPage extends StatelessWidget {
                     title: Text(syncList[0].name),
                     subtitle: Text(syncList[0].type),
                     trailing: Icon(
-                      syncList[0].icon,
+                      syncList[1].icon,
                       size: 24.0,
                     ),
                     onTap: () {
@@ -90,7 +95,7 @@ class SyncDataPage extends StatelessWidget {
           BlocConsumer<SyncOrderBloc, SyncOrderState>(
             listener: (context, state) {
               state.maybeWhen(
-                orElse: () {},
+                orElse: () async {},
                 success: () {
                   ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
                     backgroundColor: AppColors.primary,
@@ -112,24 +117,53 @@ class SyncDataPage extends StatelessWidget {
                       borderRadius: BorderRadius.circular(10),
                     ),
                   ),
-                  child: ListTile(
-                    leading: const CircleAvatar(
-                      backgroundColor: AppColors.blueLight,
-                      child: Icon(
-                        Icons.sync,
-                        size: 24.0,
-                      ),
-                    ),
-                    title: Text(syncList[1].name),
-                    subtitle: Text(syncList[1].type),
-                    trailing: Icon(
-                      syncList[1].icon,
-                      size: 24.0,
-                    ),
-                    onTap: () {
-                      context
-                          .read<SyncOrderBloc>()
-                          .add(const SyncOrderEvent.sendOrder());
+                  child: FutureBuilder(
+                    future: ProductLocalDatasource.instance.getCountByIsSync(),
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        final count = snapshot.data;
+                        return ListTile(
+                          leading: const CircleAvatar(
+                            backgroundColor: AppColors.green,
+                            child: Icon(
+                              Icons.sync,
+                              size: 24.0,
+                            ),
+                          ),
+                          title: Text(syncList[1].name),
+                          subtitle:
+                              Text('${syncList[1].type} : ${count.toString()}'),
+                          trailing: Icon(
+                            syncList[0].icon,
+                            size: 24.0,
+                          ),
+                          onTap: () {
+                            context
+                                .read<SyncOrderBloc>()
+                                .add(const SyncOrderEvent.sendOrder());
+                          },
+                        );
+                      }
+                      return ListTile(
+                        leading: const CircleAvatar(
+                          backgroundColor: AppColors.blueLight,
+                          child: Icon(
+                            Icons.sync,
+                            size: 24.0,
+                          ),
+                        ),
+                        title: Text(syncList[1].name),
+                        subtitle: Text(syncList[1].type),
+                        trailing: Icon(
+                          syncList[0].icon,
+                          size: 24.0,
+                        ),
+                        // onTap: () {
+                        // context
+                        //     .read<ProductBloc>()
+                        //     .add(const ProductEvent.fetch());
+                        // },
+                      );
                     },
                   ),
                 );

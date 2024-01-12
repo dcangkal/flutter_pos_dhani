@@ -44,7 +44,9 @@ class ProductCard extends StatelessWidget {
               child: ClipRRect(
                 borderRadius: const BorderRadius.all(Radius.circular(50.0)),
                 child: CachedNetworkImage(
-                  height: 80,
+                  width: 76,
+                  height: 76,
+                  fit: BoxFit.cover,
                   imageUrl: '${Variables.imageBaseUrl}${data.image}',
                   placeholder: (context, url) =>
                       const CircularProgressIndicator(),

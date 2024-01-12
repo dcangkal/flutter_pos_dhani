@@ -13,13 +13,6 @@ class OrderItem {
     required this.quantity,
   });
 
-  Map<String, dynamic> toMap() {
-    return <String, dynamic>{
-      'product': product.toMap(),
-      'quantity': quantity,
-    };
-  }
-
   Map<String, dynamic> toMapForLocal(int orderId) {
     return <String, dynamic>{
       'id_order': orderId,
@@ -35,6 +28,13 @@ class OrderItem {
       quantity: map['quantity']?.toInt() ?? 0,
       totalPrice: map['price']?.toInt() ?? 0 * (map['quantity']?.toInt() ?? 0),
     );
+  }
+
+  Map<String, dynamic> toMap() {
+    return <String, dynamic>{
+      'product': product.toMap(),
+      'quantity': quantity,
+    };
   }
 
   factory OrderItem.fromMap(Map<String, dynamic> map) {

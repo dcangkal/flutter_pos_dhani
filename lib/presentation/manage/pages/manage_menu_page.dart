@@ -99,9 +99,11 @@ class ManageMenuPage extends StatelessWidget {
             Row(
               children: [
                 MenuButton(
-                  iconPath: Assets.images.manageProduct.path,
+                  iconPath: Assets.images.sync.path,
                   label: 'Sync Data',
-                  onPressed: () => context.push(SyncDataPage()),
+                  onPressed: () {
+                    context.push(const SyncDataPage());
+                  },
                   isImage: true,
                 ),
                 // const SpaceWidth(15.0),

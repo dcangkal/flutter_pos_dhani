@@ -145,16 +145,16 @@ class MenuProductItem extends StatelessWidget {
                       ),
                     ),
                     const SpaceWidth(6.0),
-                    Flexible(
-                      child: Button.outlined(
-                        onPressed: () {
-                          // context.push(EditProductPage(data: data));
-                        },
-                        label: 'Ubah Produk',
-                        fontSize: 8.0,
-                        height: 31,
-                      ),
-                    ),
+                    // Flexible(
+                    //   child: Button.outlined(
+                    //     onPressed: () {
+                    //       // context.push(EditProductPage(data: data));
+                    //     },
+                    //     label: 'Ubah Produk',
+                    //     fontSize: 8.0,
+                    //     height: 31,
+                    //   ),
+                    // ),
                   ],
                 ),
               ],

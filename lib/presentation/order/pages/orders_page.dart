@@ -5,6 +5,7 @@ import 'package:flutter_pos_dhani/presentation/order/bloc/order/order_bloc.dart'
 import '../../../core/assets/assets.gen.dart';
 import '../../../core/components/menu_button.dart';
 import '../../../core/components/spaces.dart';
+import '../../../core/constants/colors.dart';
 import '../../home/bloc/checkout/checkout_bloc.dart';
 import '../../home/models/order_item.dart';
 import '../widgets/order_card.dart';
@@ -25,7 +26,7 @@ class _OrdersPageState extends State<OrdersPage> {
     final indexValue = ValueNotifier(0);
     const paddingHorizontal = EdgeInsets.symmetric(horizontal: 16.0);
 
-    List<OrderItem> orders = [];
+    // List<OrderItem> orders = [];
     int totalPrice = 0;
 
     return Scaffold(
@@ -33,10 +34,47 @@ class _OrdersPageState extends State<OrdersPage> {
         title: const Text('Order Detail'),
         centerTitle: true,
         actions: [
-          IconButton(
-            onPressed: () {},
-            icon: Assets.icons.delete.svg(),
+          BlocConsumer<CheckoutBloc, CheckoutState>(
+            listener: (context, state) {
+              state.maybeWhen(
+                orElse: () {},
+                // success: (data, price, total) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     const SnackBar(
+                //       content: Text('delete checkout success'),
+                //       backgroundColor: AppColors.primary,
+                //     ),
+                //   );
+                // },
+                // error: (message) {
+                //   ScaffoldMessenger.of(context).showSnackBar(
+                //     SnackBar(
+                //       content: Text(message),
+                //       backgroundColor: AppColors.red,
+                //     ),
+                //   );
+                // },
+              );
+            },
+            builder: (context, state) {
+              return state.maybeWhen(
+                orElse: () {
+                  return IconButton(
+                    onPressed: () {
+                      context
+                          .read<CheckoutBloc>()
+                          .add(const CheckoutEvent.started());
+                    },
+                    icon: Assets.icons.delete.svg(),
+                  );
+                },
+              );
+            },
           ),
+          // IconButton(
+          //   onPressed: () {},
+          //   icon: Assets.icons.delete.svg(),
+          // ),
         ],
       ),
       body: BlocBuilder<CheckoutBloc, CheckoutState>(

@@ -5,7 +5,7 @@ import 'package:flutter_pos_dhani/data/datasources/auth_remote_datasource.dart';
 import 'package:flutter_pos_dhani/data/datasources/order_remote_datasource.dart';
 import 'package:flutter_pos_dhani/data/datasources/product_remote_datasource.dart';
 import 'package:flutter_pos_dhani/presentation/auth/bloc/login/login_bloc.dart';
-import 'package:flutter_pos_dhani/presentation/history/bloc/bloc/history_bloc.dart';
+import 'package:flutter_pos_dhani/presentation/history/bloc/delete_history/delete_history_bloc.dart';
 import 'package:flutter_pos_dhani/presentation/home/bloc/checkout/checkout_bloc.dart';
 import 'package:flutter_pos_dhani/presentation/home/bloc/product/product_bloc.dart';
 import 'package:flutter_pos_dhani/presentation/home/pages/dashboard_page.dart';
@@ -15,6 +15,7 @@ import 'package:google_fonts/google_fonts.dart';
 
 import 'core/constants/colors.dart';
 import 'presentation/auth/pages/login_page.dart';
+import 'presentation/history/bloc/history/history_bloc.dart';
 import 'presentation/manage/bloc/logout/logout_bloc.dart';
 
 void main() {
@@ -46,6 +47,9 @@ class MyApp extends StatelessWidget {
         ),
         BlocProvider(
           create: (context) => HistoryBloc(),
+        ),
+        BlocProvider(
+          create: (context) => DeleteHistoryBloc(),
         ),
         BlocProvider(
           create: (context) => SyncOrderBloc(OrderRemoteDatasource()),

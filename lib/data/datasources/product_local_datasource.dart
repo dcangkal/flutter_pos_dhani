@@ -71,13 +71,11 @@ class ProductLocalDatasource {
     return _database!;
   }
 
-  //remove all data product
   Future<void> removeAllProduct() async {
     final db = await instance.database;
     await db.delete(tableProducts);
   }
 
-  //insert data product from list product
   Future<void> insertAllProduct(List<Product> products) async {
     final db = await instance.database;
     for (var product in products) {
@@ -85,14 +83,12 @@ class ProductLocalDatasource {
     }
   }
 
-  //isert data product
   Future<Product> insertProduct(Product product) async {
     final db = await instance.database;
     int id = await db.insert(tableProducts, product.toMap());
     return product.copyWith(id: id);
   }
 
-  //get all data product
   Future<List<Product>> getAllProduct() async {
     final db = await instance.database;
     final result = await db.query(tableProducts);
@@ -100,7 +96,6 @@ class ProductLocalDatasource {
     return result.map((e) => Product.fromMap(e)).toList();
   }
 
-  //save order
   Future<int> saveOrder(OrderModel order) async {
     final db = await instance.database;
     int id = await db.insert('orders', order.toMapForLocal());
@@ -110,7 +105,6 @@ class ProductLocalDatasource {
     return id;
   }
 
-  //get order by isSync = 0
   Future<List<OrderModel>> getOrderByIsSync() async {
     final db = await instance.database;
     final result = await db.query('orders', where: 'is_sync = 0');
@@ -118,7 +112,18 @@ class ProductLocalDatasource {
     return result.map((e) => OrderModel.fromLocalMap(e)).toList();
   }
 
-  //get order item by id order
+  Future<int?> getCountByIsSync() async {
+    final db = await instance.database;
+    final result = await db.query(
+      'orders',
+      where: 'is_sync=?',
+      whereArgs: [0],
+    );
+    int? count = Sqflite.firstIntValue(result);
+    // print(count);
+    return count;
+  }
+
   Future<List<OrderItemKirim>> getOrderItemByOrderIdLocal(int idOrder) async {
     final db = await instance.database;
     final result = await db.query('order_items', where: 'id_order = $idOrder');
@@ -126,7 +131,6 @@ class ProductLocalDatasource {
     return result.map((e) => OrderItem.fromMapLocal(e)).toList();
   }
 
-  //get order item by id order
   Future<List<OrderItem>> getOrderItemByOrderId(int idOrder) async {
     final db = await instance.database;
     final result = await db.query('order_items', where: 'id_order = $idOrder');
@@ -134,18 +138,53 @@ class ProductLocalDatasource {
     return result.map((e) => OrderItem.fromMap(e)).toList();
   }
 
-  //update isSync order by id
   Future<int> updateIsSyncOrderById(int id) async {
     final db = await instance.database;
     return await db.update('orders', {'is_sync': 1},
         where: 'id = ?', whereArgs: [id]);
   }
 
-  //get all orders
   Future<List<OrderModel>> getAllOrder() async {
     final db = await instance.database;
     final result = await db.query('orders', orderBy: 'id DESC');
 
     return result.map((e) => OrderModel.fromLocalMap(e)).toList();
+  }
+
+  Future<bool> deleteSyncedOrdersAndItems() async {
+    final db = await instance.database;
+
+    // Step 1: Get orders with is_sync equal to 1
+    final syncedOrders =
+        await db.query('orders', where: 'is_sync = ?', whereArgs: [1]);
+
+    // Step 2: Loop through and delete each order
+    for (Map<String, dynamic> order in syncedOrders) {
+      final orderId =
+          order['id']; // Assuming 'id' is the primary key of 'orders' table
+
+      // Step 3: Delete associated OrderItem records
+      await _deleteOrderItemsByOrderId(db, orderId);
+
+      // Step 4: Delete the order itself
+      await db.delete('orders', where: 'id = ?', whereArgs: [orderId]);
+    }
+    print(syncedOrders);
+    if (syncedOrders.isEmpty) {
+      return false;
+    } else {
+      return true;
+    }
+  }
+
+  Future<void> _deleteOrderItemsByOrderId(Database db, int orderId) async {
+    final orderItems = await db
+        .query('order_items', where: 'id_order = ?', whereArgs: [orderId]);
+
+    for (Map<String, dynamic> orderItem in orderItems) {
+      final itemId = orderItem[
+          'id']; // Assuming 'id' is the primary key of 'order_items' table
+      await db.delete('order_items', where: 'id = ?', whereArgs: [itemId]);
+    }
   }
 }

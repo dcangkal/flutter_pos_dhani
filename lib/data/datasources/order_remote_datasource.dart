@@ -19,7 +19,7 @@ class OrderRemoteDatasource {
       body: requestModel.toJson(),
     );
 
-    if (response.statusCode == 201) {
+    if (response.statusCode == 200) {
       return true;
     } else {
       return false;

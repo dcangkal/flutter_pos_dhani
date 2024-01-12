@@ -38,7 +38,7 @@ class _LoginPageState extends State<LoginPage> {
           Padding(
               padding: const EdgeInsets.symmetric(horizontal: 130.0),
               child: Image.asset(
-                Assets.images.logo.path,
+                Assets.images.mumtazpreneur.path,
                 width: 100,
                 height: 100,
               )),

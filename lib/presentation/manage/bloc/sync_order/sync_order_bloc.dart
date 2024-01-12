@@ -30,14 +30,7 @@ class SyncOrderBloc extends Bloc<SyncOrderEvent, SyncOrderState> {
             totalPrice: order.totalPrice,
             kasirId: order.idKasir,
             paymentMethod: order.paymentMethod,
-            orderItems: orderItems
-            // .map((e) => OrderItemModel(
-            //       productId: e.product.id!,
-            //       quantity: e.quantity,
-            //       totalPrice: e.product.price * e.quantity,
-            //     ))
-            // .toList(),
-            );
+            orderItems: orderItems);
         final response = await orderRemoteDatasource.sendOrder(orderRequest);
         if (response) {
           await ProductLocalDatasource.instance

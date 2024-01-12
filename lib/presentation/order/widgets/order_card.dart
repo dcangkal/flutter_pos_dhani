@@ -128,7 +128,12 @@ class OrderCard extends StatelessWidget {
         Padding(
           padding: const EdgeInsets.only(right: 16.0),
           child: IconButton(
-            onPressed: onDeleteTap,
+            onPressed: () {
+              context
+                  .read<CheckoutBloc>()
+                  .add(CheckoutEvent.deleteItemCheckout(data.product));
+              onDeleteTap();
+            },
             icon: const Icon(
               Icons.highlight_off,
               color: AppColors.primary,
