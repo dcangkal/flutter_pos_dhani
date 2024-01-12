@@ -18,19 +18,6 @@ class HistoryTransactionCard extends StatelessWidget {
   });
   @override
   Widget build(BuildContext context) {
-    // Print information about OrderModel to the console
-    // print('Order ID: ${data.id}');
-    // print('Transaction Time: ${data.transactionTime}');
-    // print('Total Quantity: ${data.totalQuantity}');
-    // print('Total Price: ${data.totalPrice}');
-    // print('Payment Method: ${data.paymentMethod}');
-    // print('Nominal Bayar: ${data.nominalBayar}');
-
-    // Print information about each OrderItem to the console
-    // for (OrderItem item in data.orders) {
-    //   print('Item Name: ${item.product.name}');
-    //   print('Quantity: ${item.quantity}');
-    // }
     return Container(
       margin: padding,
       decoration: BoxDecoration(
@@ -60,7 +47,7 @@ class HistoryTransactionCard extends StatelessWidget {
         onTap: () {
           context.push(
             HistoryDetailPage(
-              order: data,
+              orderId: data.id!,
             ),
           );
         },

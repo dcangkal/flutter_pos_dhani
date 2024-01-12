@@ -46,7 +46,6 @@ class PaymentSuccessDialog extends StatelessWidget {
             namaKasir,
           ) {
             context.read<CheckoutBloc>().add(const CheckoutEvent.started());
-            // context.read<OrderBloc>().add(const OrderEvent.started());
             return Column(
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,

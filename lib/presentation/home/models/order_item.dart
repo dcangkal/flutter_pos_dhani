@@ -39,7 +39,7 @@ class OrderItem {
 
   factory OrderItem.fromMap(Map<String, dynamic> map) {
     return OrderItem(
-      product: Product.fromMap(map['product'] as Map<String, dynamic>),
+      product: Product.fromMap(map['product']),
       quantity: map['quantity'] as int,
     );
   }
@@ -47,5 +47,5 @@ class OrderItem {
   String toJson() => json.encode(toMap());
 
   factory OrderItem.fromJson(String source) =>
-      OrderItem.fromMap(json.decode(source) as Map<String, dynamic>);
+      OrderItem.fromMap(json.decode(source));
 }

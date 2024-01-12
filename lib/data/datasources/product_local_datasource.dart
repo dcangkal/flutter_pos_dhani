@@ -101,6 +101,7 @@ class ProductLocalDatasource {
     int id = await db.insert('orders', order.toMapForLocal());
     for (var orderItem in order.orders) {
       await db.insert('order_items', orderItem.toMapForLocal(id));
+      print(orderItem.toMapForLocal(id));
     }
     return id;
   }
@@ -108,7 +109,6 @@ class ProductLocalDatasource {
   Future<List<OrderModel>> getOrderByIsSync() async {
     final db = await instance.database;
     final result = await db.query('orders', where: 'is_sync = 0');
-
     return result.map((e) => OrderModel.fromLocalMap(e)).toList();
   }
 
@@ -116,12 +116,10 @@ class ProductLocalDatasource {
     final db = await instance.database;
     final result = await db.query(
       'orders',
-      where: 'is_sync=?',
-      whereArgs: [0],
+      where: 'is_sync = 0',
     );
-    int? count = Sqflite.firstIntValue(result);
-    // print(count);
-    return count;
+    int rowCount = result.length;
+    return rowCount;
   }
 
   Future<List<OrderItemKirim>> getOrderItemByOrderIdLocal(int idOrder) async {
@@ -186,5 +184,22 @@ class ProductLocalDatasource {
           'id']; // Assuming 'id' is the primary key of 'order_items' table
       await db.delete('order_items', where: 'id = ?', whereArgs: [itemId]);
     }
+  }
+
+  Future<List<Map<String, dynamic>>> getOrderItemsByOrderId(int orderId) async {
+    final db = await instance.database;
+    // final result = await db.rawQuery('''
+    //   SELECT *
+    //   FROM order_items
+    //   WHERE id_order = ?
+    // ''', [orderId]);
+    final result = await db.rawQuery('''
+    SELECT order_items.*, products.name
+    FROM order_items
+    INNER JOIN products ON order_items.id_product = products.product_id
+    WHERE order_items.id_order = ?
+  ''', [orderId]);
+    print(result);
+    return result;
   }
 }

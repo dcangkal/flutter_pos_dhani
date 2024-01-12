@@ -1,17 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
 
 import '../../home/models/order_item.dart';
 import '../../order/models/order_model.dart';
 
-class HistoryDetailPage extends StatefulWidget {
-  final OrderModel order;
-  const HistoryDetailPage({super.key, required this.order});
+class HistoryDetailPage extends StatelessWidget {
+  final int orderId;
+  const HistoryDetailPage({super.key, required this.orderId});
 
-  @override
-  State<HistoryDetailPage> createState() => _HistoryDetailPageState();
-}
-
-class _HistoryDetailPageState extends State<HistoryDetailPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -19,27 +15,32 @@ class _HistoryDetailPageState extends State<HistoryDetailPage> {
         title: const Text('Detail Order'),
         centerTitle: true,
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Transaction Time: ${widget.order.transactionTime}'),
-            Text('Total Quantity: ${widget.order.totalQuantity} items'),
-            Text('Total Price: ${widget.order.totalPrice}'),
-            Text('Payment Method: ${widget.order.paymentMethod}'),
-            Text('Nominal Bayar: ${widget.order.nominalBayar}'),
-            const SizedBox(height: 16),
-            const Text('Order Items:'),
-            // Menampilkan detail setiap item di dalam order
-            for (OrderItem item in widget.order.orders)
-              ListTile(
-                title: Text(item.product.name),
-                subtitle: Text('Quantity: ${item.quantity}'),
-              ),
-            // Add more details based on your OrderModel properties
-          ],
-        ),
+      body: FutureBuilder<List<Map<String, dynamic>>>(
+        future: ProductLocalDatasource.instance.getOrderItemsByOrderId(orderId),
+        builder: (context, snapshot) {
+          if (snapshot.connectionState == ConnectionState.waiting) {
+            return const CircularProgressIndicator();
+          } else if (snapshot.hasError) {
+            return Text('Error: ${snapshot.error}');
+          } else if (!snapshot.hasData || snapshot.data!.isEmpty) {
+            return const Text('No order items found.');
+          } else {
+            List<Map<String, dynamic>> orderItems = snapshot.data!;
+
+            return ListView.builder(
+              itemCount: orderItems.length,
+              itemBuilder: (context, index) {
+                Map<String, dynamic> item = orderItems[index];
+
+                return ListTile(
+                  title: Text(item['name']),
+                  subtitle: Text(
+                      'Quantity: ${item['quantity']} - Price: ${item['price']}'),
+                );
+              },
+            );
+          }
+        },
       ),
     );
   }

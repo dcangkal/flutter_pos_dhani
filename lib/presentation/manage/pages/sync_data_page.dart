@@ -122,27 +122,29 @@ class _SyncDataPageState extends State<SyncDataPage> {
                     builder: (context, snapshot) {
                       if (snapshot.hasData) {
                         final count = snapshot.data;
-                        return ListTile(
-                          leading: const CircleAvatar(
-                            backgroundColor: AppColors.green,
-                            child: Icon(
-                              Icons.sync,
+                        if (count != 0) {
+                          return ListTile(
+                            leading: const CircleAvatar(
+                              backgroundColor: AppColors.green,
+                              child: Icon(
+                                Icons.sync,
+                                size: 24.0,
+                              ),
+                            ),
+                            title: Text(syncList[1].name),
+                            subtitle: Text(
+                                '${syncList[1].type} : ${count.toString()} data'),
+                            trailing: Icon(
+                              syncList[0].icon,
                               size: 24.0,
                             ),
-                          ),
-                          title: Text(syncList[1].name),
-                          subtitle:
-                              Text('${syncList[1].type} : ${count.toString()}'),
-                          trailing: Icon(
-                            syncList[0].icon,
-                            size: 24.0,
-                          ),
-                          onTap: () {
-                            context
-                                .read<SyncOrderBloc>()
-                                .add(const SyncOrderEvent.sendOrder());
-                          },
-                        );
+                            onTap: () {
+                              context
+                                  .read<SyncOrderBloc>()
+                                  .add(const SyncOrderEvent.sendOrder());
+                            },
+                          );
+                        }
                       }
                       return ListTile(
                         leading: const CircleAvatar(
