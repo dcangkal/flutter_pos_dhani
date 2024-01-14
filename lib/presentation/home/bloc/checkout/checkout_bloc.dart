@@ -58,12 +58,9 @@ class CheckoutBloc extends Bloc<CheckoutEvent, CheckoutState> {
     });
 
     on<_DeleteItemCheckout>((event, emit) {
-      // Check if the item is present in the current checkout list
       if (state is _Success) {
         var currentStates = state as _Success;
         List<OrderItem> newCheckout = List.from(currentStates.products);
-
-        // Remove the item from the checkout list
         newCheckout
             .removeWhere((element) => element.product.id == event.product.id);
         int totalQuantity = 0;

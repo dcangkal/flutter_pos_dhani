@@ -5,9 +5,7 @@ import 'package:flutter_pos_dhani/presentation/order/bloc/order/order_bloc.dart'
 import '../../../core/assets/assets.gen.dart';
 import '../../../core/components/menu_button.dart';
 import '../../../core/components/spaces.dart';
-import '../../../core/constants/colors.dart';
 import '../../home/bloc/checkout/checkout_bloc.dart';
-import '../../home/models/order_item.dart';
 import '../widgets/order_card.dart';
 import '../widgets/payment_cash_dialog.dart';
 import '../widgets/payment_qris_dialog.dart';
@@ -31,7 +29,9 @@ class _OrdersPageState extends State<OrdersPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Order Detail'),
+        title: const Text('Detail Orders',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
         centerTitle: true,
         actions: [
           BlocConsumer<CheckoutBloc, CheckoutState>(
@@ -71,17 +71,13 @@ class _OrdersPageState extends State<OrdersPage> {
               );
             },
           ),
-          // IconButton(
-          //   onPressed: () {},
-          //   icon: Assets.icons.delete.svg(),
-          // ),
         ],
       ),
       body: BlocBuilder<CheckoutBloc, CheckoutState>(
         builder: (context, state) {
           return state.maybeWhen(orElse: () {
             return const Center(
-              child: Text('No Data'),
+              child: Text('error'),
             );
           }, success: (data, qty, total) {
             if (data.isEmpty) {
@@ -125,9 +121,11 @@ class _OrdersPageState extends State<OrdersPage> {
                         MenuButton(
                           iconPath: Assets.icons.cash.path,
                           label: 'Tunai',
-                          isActive: value == 1,
+                          isActive: data.isEmpty ? false : value == 1,
                           onPressed: () {
-                            indexValue.value = 1;
+                            data.isEmpty
+                                ? indexValue.value = 0
+                                : indexValue.value = 1;
                             context.read<OrderBloc>().add(
                                 OrderEvent.addPaymentMethod('Tunai', data));
                           },
@@ -136,8 +134,15 @@ class _OrdersPageState extends State<OrdersPage> {
                         MenuButton(
                           iconPath: Assets.icons.qrCode.path,
                           label: 'QRIS',
-                          isActive: value == 2,
-                          onPressed: () => indexValue.value = 2,
+                          isActive: data.isEmpty ? false : value == 2,
+                          onPressed: () {
+                            data.isEmpty
+                                ? indexValue.value = 0
+                                : indexValue.value = 2;
+                            context
+                                .read<OrderBloc>()
+                                .add(OrderEvent.addPaymentMethod('QRIS', data));
+                          },
                         ),
                         const SpaceWidth(10.0),
                       ],
@@ -148,10 +153,12 @@ class _OrdersPageState extends State<OrdersPage> {
             ),
             const SpaceHeight(20.0),
             ProcessButton(
-              price: 123000,
+              price: 0,
               onPressed: () async {
                 if (indexValue.value == 0) {
+                  print(indexValue.value);
                 } else if (indexValue.value == 1) {
+                  print(indexValue.value);
                   showDialog(
                     context: context,
                     builder: (context) => PaymentCashDialog(
@@ -159,11 +166,14 @@ class _OrdersPageState extends State<OrdersPage> {
                     ),
                   );
                 } else if (indexValue.value == 2) {
-                  // showDialog(
-                  //   context: context,
-                  //   barrierDismissible: false,
-                  //   builder: (context) => const PaymentQrisDialog(),
-                  // );
+                  print(indexValue.value);
+                  showDialog(
+                    context: context,
+                    barrierDismissible: false,
+                    builder: (context) => PaymentQrisDialog(
+                      price: totalPrice,
+                    ),
+                  );
                 }
               },
             ),

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
 
+import '../../../core/constants/colors.dart';
 import '../../home/models/order_item.dart';
 import '../../order/models/order_model.dart';
 
@@ -12,7 +13,9 @@ class HistoryDetailPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Detail Order'),
+        title: const Text('Detail History Orders',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
         centerTitle: true,
       ),
       body: FutureBuilder<List<Map<String, dynamic>>>(
@@ -31,11 +34,26 @@ class HistoryDetailPage extends StatelessWidget {
               itemCount: orderItems.length,
               itemBuilder: (context, index) {
                 Map<String, dynamic> item = orderItems[index];
-
+                var totalHarga = item['quantity'] * item['price'];
                 return ListTile(
-                  title: Text(item['name']),
+                  title: Text(
+                    item['name'],
+                    style: const TextStyle(
+                      // color: AppColors.primary,
+                      fontSize: 18,
+                      // fontWeight: FontWeight.w700,
+                    ),
+                  ),
                   subtitle: Text(
                       'Quantity: ${item['quantity']} - Price: ${item['price']}'),
+                  trailing: Text(
+                    'Rp. $totalHarga',
+                    style: const TextStyle(
+                      color: AppColors.primary,
+                      fontSize: 16,
+                      fontWeight: FontWeight.w700,
+                    ),
+                  ),
                 );
               },
             );

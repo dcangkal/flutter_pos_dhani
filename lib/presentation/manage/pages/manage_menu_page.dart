@@ -19,7 +19,9 @@ class ManageMenuPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Kelola'),
+        title: const Text('Settings',
+            style: TextStyle(fontWeight: FontWeight.bold)),
+        elevation: 0,
         centerTitle: true,
         actions: [
           BlocConsumer<LogoutBloc, LogoutState>(
