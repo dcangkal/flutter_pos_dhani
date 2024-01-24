@@ -3,6 +3,8 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_pos_dhani/core/extensions/build_context_ext.dart';
 import 'package:flutter_pos_dhani/data/datasources/auth_local_datasource.dart';
 import 'package:flutter_pos_dhani/presentation/auth/pages/login_page.dart';
+import 'package:flutter_pos_dhani/presentation/manage/pages/manage_printer_page.dart';
+import 'package:flutter_pos_dhani/presentation/manage/pages/save_server_key_page.dart';
 import 'package:flutter_pos_dhani/presentation/manage/pages/sync_data_page.dart';
 
 import '../../../core/assets/assets.gen.dart';
@@ -90,7 +92,7 @@ class ManageMenuPage extends StatelessWidget {
                 MenuButton(
                   iconPath: Assets.images.managePrinter.path,
                   label: 'Kelola Printer',
-                  onPressed: () {},
+                  onPressed: () => context.push(const ManagePrinterPage()),
                   isImage: true,
                 ),
               ],
@@ -108,13 +110,15 @@ class ManageMenuPage extends StatelessWidget {
                   },
                   isImage: true,
                 ),
-                // const SpaceWidth(15.0),
-                // MenuButton(
-                //   iconPath: Assets.images.managePrinter.path,
-                //   label: 'Kelola Printer',
-                //   onPressed: () {},
-                //   isImage: true,
-                // ),
+                const SpaceWidth(15.0),
+                MenuButton(
+                  iconPath: Assets.images.managePrinter.path,
+                  label: 'Midtrans ServerKey',
+                  onPressed: () {
+                    context.push(const SaveServerKeyPage());
+                  },
+                  isImage: true,
+                ),
               ],
             ),
           ],

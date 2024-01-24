@@ -1,8 +1,5 @@
 import 'dart:convert';
 
-import 'package:flutter/foundation.dart';
-import 'package:meta/meta.dart';
-
 class ProductResponseModel {
   final bool success;
   final String message;

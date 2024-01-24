@@ -2,8 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_pos_dhani/data/datasources/product_local_datasource.dart';
 
 import '../../../core/constants/colors.dart';
-import '../../home/models/order_item.dart';
-import '../../order/models/order_model.dart';
 
 class HistoryDetailPage extends StatelessWidget {
   final int orderId;
@@ -44,8 +42,8 @@ class HistoryDetailPage extends StatelessWidget {
                       // fontWeight: FontWeight.w700,
                     ),
                   ),
-                  subtitle: Text(
-                      'Quantity: ${item['quantity']} - Price: ${item['price']}'),
+                  subtitle:
+                      Text('Rp. ${item['price']} x ${item['quantity']} pcs'),
                   trailing: Text(
                     'Rp. $totalHarga',
                     style: const TextStyle(
